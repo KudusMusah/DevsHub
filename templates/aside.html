@@ -1,0 +1,53 @@
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" href="{% url 'create-room' %}">
+          <i class="bi bi-menu-button-wide"></i><span>Create Room</span>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" href="{% url 'created-rooms' %}">
+          <i class="bi bi-menu-button-wide"></i><span>My created Room</span>
+        </a>
+      </li><!-- End Components Nav -->
+
+      <li class="nav-heading">Topics</li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'home' %}">
+        <i class="bi bi-people"></i>
+        <span>All topics</span>
+        </a>
+    </li><!-- End Profile Page Nav -->
+
+      {% for topic in topics %}
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'home' %}?q={{topic.name}}">
+            <i class="bi bi-people"></i>
+            <span>{{topic.name}}</span>
+            </a>
+        </li><!-- End Profile Page Nav -->
+      {% endfor %}
+      
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="{% url 'logout' %}">
+        <i class="bi bi-door-open"></i>
+        <span>Logout</span>
+        </a>
+      </li>
+      {% endif %}
+
+    </ul>
+
+  </aside><!-- End Sidebar-->

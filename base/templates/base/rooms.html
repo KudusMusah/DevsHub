@@ -1,0 +1,149 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Rooms{% endblock title %}
+
+{% block css_files %}
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+<style>
+    /* Custom CSS */
+    .alert {
+      padding: 0.7rem 1.25rem; /* Adjust the padding as needed */
+      font-size: 0.875rem; /* Adjust the font size as needed */
+      height: auto !important; /* Allow the height to adjust dynamically based on content */
+    }
+</style>
+{% endblock css_files %}
+
+
+{% block content %}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>{{room.name}}</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Description</a></li>
+          <li class="breadcrumb-item active">{{room.description|truncatewords:15}}</li>
+          <li class="breadcrumb-item active">creator: @{{room.host.profile.user}}</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-7">
+          {% if user in room.members.all %}
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="alert alert-success" role="alert">
+                      You are a member of this group
+                    </div>
+                </div>
+                <div class="col-md-2 mt-1 mb-2">
+                    <a href="{% url "exit-room" room.id %}" class="btn btn-danger">Exit</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-dark" role="alert">
+                Send message to join group
+            </div>
+        {% endif %}
+            <!-- Reports -->
+            <div class="col-12">
+              <div class="card pt-2">
+                <div class="chat-container card-body" style="max-height: 480px; overflow-y: auto;">
+                  <h5 class="card-title">Chats <span>/new messages on top</span></h5>
+                  {% for message in room.get_messages %}    
+                    <div class="container">
+                        <div class="col-md-6 {% if message.user == request.user  %}ms-auto text-end alert alert-success{% else %} alert alert-dark{% endif %} ">
+                            <div class="media">
+                                <img src="{{message.user.profile.profile_pic.url}}" style="width:25px; height:23px;" class="me- rounded-circle" alt="Profile Picture">
+                                <a href="{% url 'profile' message.user.id %}"><span class="mt-0">@{{message.user}}</span></a> | 
+                                <small>{{message.created|timesince}} ago</small>
+                                <div class="media-body">
+                                    <p>{{message.body}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  {% endfor %}
+                </div>
+                <div class="row m-3">
+                  <form class="col-sm-12" method="POST">
+                    {% csrf_token %}
+                    <div class="input-group">
+                    <input type="text" class="form-control" name="message" placeholder="Enter message.....">
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                        <i class="bi bi-arrow-right"></i> <!-- Replace with your desired icon -->
+                        </span>
+                    </div>
+                    </div>
+                                        
+                  </form>
+                </div>
+
+              </div>
+            </div><!-- End Reports -->
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-5">
+
+          {% comment %} members {% endcomment %}
+          <div class="card">
+            <div class="card-body pb-0">
+              <h5 class="card-title">Room Members <span>| {{members|length}}</span></h5>
+
+              {% for user in members %}
+              <div class="news">
+                <div class="post-item clearfix">
+                  <a href="{% url 'profile' user.id %}"><img src="{{user.profile.profile_pic.url}}" alt=""></a>
+                  <h4><a href="{% url 'profile' user.id %}">@
+                    {% if user.profile.full_name %}
+                        {{user.profile.full_name}}
+                    {% else %}
+                        {{user}}
+                    {% endif %} 
+                  </a></h4>
+                  <p>
+                    {% if user.profile.bio %}
+                        {{user.profile.bio|truncatewords:5}}
+                    {% else %}
+                        No bio
+                    {% endif %} 
+                  </p>
+                  <br>
+                </div>
+              </div>
+              {% endfor %}
+
+            </div>
+          </div><!-- End News & Updates -->
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+{% endblock content %}
+
+
+
+{% block Scripts %}
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{% endblock Scripts %}

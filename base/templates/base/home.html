@@ -1,0 +1,179 @@
+{% extends 'main.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}Home{% endblock title %}
+
+{% block css_files %}
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+<link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+{% endblock css_files %}
+
+
+{% block content %}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Sales Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Groups <span>| total available</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{rooms_count}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Sales Card -->
+
+            <!-- Revenue Card -->
+            <div class="col-xxl-4 col-md-6">
+              <div class="card info-card revenue-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Groups <span>| Member of</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-person"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{members_of_count}}</h6>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Revenue Card -->
+
+            <!-- Customers Card -->
+            <div class="col-xxl-4 col-xl-12">
+
+              <div class="card info-card customers-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Rooms <span>| Available to join</span></h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{remaining}}</h6>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div><!-- End Customers Card -->
+
+            <!-- Reports -->
+            <div class="col-12">
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Rooms <span>| {{q_room_count}} reults</span></h5>
+
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">Room creator</th>
+                        <th scope="col">Room name</th>
+                        <th scope="col">Members</th>
+                        <th scope="col">Last Active</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% if empty_rooms %}
+                      <h4>No available room</h4>
+                      {% else %}
+                      {% for room in rooms %}
+                      <tr>
+                        <th scope="row"><a href=""><img src="{{room.host.profile.profile_pic.url}}" alt="host image"></a></th>
+                        <td><a href="{% url 'room' room.id %}" class="text-primary fw-bold">{{room.name}}</a></td>
+                        <td>{{room.members.all|length}}</td>
+                        <td class="fw-bold">{{room.last_active}}</td>
+                      </tr>
+                      {% endfor %}
+                      {% endif %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Top Selling -->
+              
+            </div><!-- End Reports -->
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Recent Activities</h5>
+
+              <div class="activity">
+                {% if empty_activity %}
+                  <h5>No recent activity</h5>
+                {% else %}
+                {% for item in room_messages %}
+                <div class="activity-item d-flex">
+                  <div class="activite-label">{{item.created|hours_since}} hours</div>
+                  <i class='bi bi-circle-fill activity-badge text-{{item.get_random_color}} align-self-start'></i>
+                  <div class="activity-content">
+                    @{{item.user}} replied to <a href="#" class="fw-bold text-dark">'{{item.room}}'</a> <br>{{item.body}}
+                  </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+
+              </div>
+
+            </div>
+          </div><!-- End Recent Activity -->
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+{% endblock content %}
+
+
+
+{% block Scripts %}
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock Scripts %}
